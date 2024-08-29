@@ -38,7 +38,12 @@ export class ProductsAppStack extends cdk.Stack {
                     minify: true,
                     sourceMap: false
                 },
+                environment: {
+                    PRODUCTS_DDB: this.productsDdb.tableName // capturando o nome da tabela e adicionando a variável
+                }
             }
         )
+
+        this.productsDdb.grantReadData(this.productsFetchHandler) //dando permissão de ler os dados do banco para a função de procurar produtos
     }
 }
