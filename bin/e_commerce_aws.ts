@@ -22,7 +22,8 @@ const productsAppStack = new ProductsAppStack(app, "ProductsApp", {
 })
 
 const eCommerceApiStack = new ECommerceApiStack(app, "ECommerceApi", {
-  productsFetchHandler:productsAppStack.productsFetchHandler, //passando a instância da função para dentro da constante que cria o api gateway
+  productsFetchHandler: productsAppStack.productsFetchHandler, //passando a instância da função para dentro da constante que cria o api gateway
+  productsAdminHandler: productsAppStack.productsAdminHandler,
   tags: tags,
   env: env
 })
