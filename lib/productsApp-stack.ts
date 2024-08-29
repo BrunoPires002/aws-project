@@ -9,6 +9,7 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb"
 
 export class ProductsAppStack extends cdk.Stack {
     readonly productsFetchHandler: lambdaNodeJS.NodejsFunction
+    readonly productsAdminHandler: lambdaNodeJS.NodejsFunction
     readonly productsDdb: dynamodb.Table //criando uma classe para a tabela dynamoDB
 
     constructor(scope: Construct, id: string, props?: cdk.StackProps){
@@ -45,5 +46,25 @@ export class ProductsAppStack extends cdk.Stack {
         )
 
         this.productsDdb.grantReadData(this.productsFetchHandler) //dando permissão de ler os dados do banco para a função de procurar produtos
+    
+        this.productsAdminHandler = new lambdaNodeJS.NodejsFunction(this,
+            "ProductsAdminFunction", {
+                runtime: lambda.Runtime.NODEJS_20_X,
+                functionName: "ProductsAdminFunction",
+                entry: "lambda/products/productsAdminFunction.ts",
+                handler: "handler",
+                memorySize: 512,
+                timeout: cdk.Duration.seconds(5),
+                bundling: {
+                    minify: true,
+                    sourceMap: false
+                },
+                environment: {
+                    PRODUCTS_DDB: this.productsDdb.tableName // capturando o nome da tabela e adicionando a variável
+                }
+            }
+        )
+
+        this.productsDdb.grantWriteData(this.productsAdminHandler) //dando permissão de escrever os dados do banco para a função de criar produtos
     }
 }
